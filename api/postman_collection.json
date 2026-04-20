@@ -1,0 +1,210 @@
+{
+  "info": {
+    "name": "Helios Trading API",
+    "description": "API endpoints for Helios Trading Platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Register User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"trader_test\",\n  \"email\": \"trader@test.com\",\n  \"password\": \"securepass123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/auth/register",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "auth", "register"]
+        }
+      }
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"trader_test\",\n  \"password\": \"securepass123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/auth/login",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "Get Balances",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/account/balances",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "account", "balances"]
+        }
+      }
+    },
+    {
+      "name": "Place LIMIT Order",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"pair\": \"BTC/USD\",\n  \"side\": \"BUY\",\n  \"type\": \"LIMIT\",\n  \"quantity\": 0.5,\n  \"price\": 39000.00\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/orders",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "orders"]
+        }
+      }
+    },
+    {
+      "name": "Place MARKET Order",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"pair\": \"BTC/USD\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"quantity\": 0.1\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/orders",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "orders"]
+        }
+      }
+    },
+    {
+      "name": "Get Order History",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/orders/history?pair=BTC/USD",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "orders", "history"],
+          "query": [
+            {
+              "key": "pair",
+              "value": "BTC/USD"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Cancel Order",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/orders/2001",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "orders", "2001"]
+        }
+      }
+    },
+    {
+      "name": "Get Order Book",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/market/orderbook/BTC/USD",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "market", "orderbook", "BTC", "USD"]
+        }
+      }
+    },
+    {
+      "name": "Get Trade History",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/market/trades/BTC/USD?limit=100",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "market", "trades", "BTC", "USD"],
+          "query": [
+            {
+              "key": "limit",
+              "value": "100"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "auth_token",
+      "value": ""
+    }
+  ]
+}

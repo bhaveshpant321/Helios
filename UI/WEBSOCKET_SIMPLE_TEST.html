@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple WebSocket Test</title>
+    <style>
+        body { font-family: monospace; background: #1a1a1a; color: #0f0; padding: 20px; }
+        button { padding: 10px 20px; margin: 10px; background: #0f0; color: #000; border: none; cursor: pointer; font-size: 16px; font-weight: bold; }
+        #log { background: #000; border: 2px solid #0f0; padding: 15px; margin-top: 20px; height: 500px; overflow-y: auto; }
+        .error { color: #f00; }
+        .success { color: #0f0; }
+    </style>
+</head>
+<body>
+    <h1>WebSocket Simple Test</h1>
+    <div>
+        <button onclick="test1()">Test 1: No Encoding (BTCUSD)</button>
+        <button onclick="test2()">Test 2: With Encoding (BTC%2FUSD)</button>
+        <button onclick="test3()">Test 3: HTTP GET to endpoint</button>
+        <button onclick="clearLog()">Clear Log</button>
+    </div>
+    <div id="log"></div>
+
+    <script>
+        function log(msg, type = 'success') {
+            const div = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            const line = document.createElement('div');
+            line.className = type;
+            line.textContent = `[${time}] ${msg}`;
+            div.appendChild(line);
+            div.scrollTop = div.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        function test1() {
+            log('=== TEST 1: No slash, no encoding ===');
+            testWebSocket('ws://192.168.227.128:8082/ws/v1/market/BTCUSD');
+        }
+
+        function test2() {
+            log('=== TEST 2: With encoding BTC%2FUSD ===');
+            testWebSocket('ws://192.168.227.128:8082/ws/v1/market/BTC%2FUSD');
+        }
+
+        function test3() {
+            log('=== TEST 3: Check API health and network ===');
+            
+            // Test 1: Health endpoint
+            fetch('http://192.168.227.128:8082/health')
+                .then(r => r.json())
+                .then(data => {
+                    log('✅ Health check OK: ' + JSON.stringify(data), 'success');
+                    
+                    // Test 2: Trading pairs
+                    return fetch('http://192.168.227.128:8082/api/v1/trading-pairs');
+                })
+                .then(r => r.json())
+                .then(data => {
+                    log('✅ Trading pairs OK:', 'success');
+                    log('   Available pairs: ' + data.data.map(p => p.symbol).join(', '), 'success');
+                    
+                    // Test 3: Try WebSocket upgrade as HTTP request to see the error
+                    return fetch('http://192.168.227.128:8082/ws/v1/market/BTC/USD', {
+                        headers: {
+                            'Upgrade': 'websocket',
+                            'Connection': 'Upgrade'
+                        }
+                    });
+                })
+                .then(r => {
+                    log('HTTP request to WebSocket endpoint: Status ' + r.status, r.ok ? 'success' : 'error');
+                    if (!r.ok) {
+                        log('   This might show the actual server error', 'error');
+                    }
+                    return r.text();
+                })
+                .then(text => {
+                    if (text) {
+                        log('   Response: ' + text, 'error');
+                    }
+                })
+                .catch(err => {
+                    log('❌ Network test failed: ' + err, 'error');
+                    log('   Check if API server is running at 192.168.227.128:8082', 'error');
+                });
+        }
+
+        function testWebSocket(url) {
+            log('Connecting to: ' + url);
+            
+            const ws = new WebSocket(url);
+            
+            ws.onopen = () => {
+                log('✅ CONNECTED!', 'success');
+            };
+            
+            ws.onmessage = (e) => {
+                log('📨 Message: ' + e.data, 'success');
+            };
+            
+            ws.onerror = (e) => {
+                log('❌ ERROR: ' + e, 'error');
+            };
+            
+            ws.onclose = (e) => {
+                log(`🔌 CLOSED - Code: ${e.code}, Reason: ${e.reason || 'none'}`, 'error');
+            };
+            
+            // Close after 3 seconds if connected
+            setTimeout(() => {
+                if (ws.readyState === WebSocket.OPEN) {
+                    ws.close();
+                    log('Manually closed connection');
+                }
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

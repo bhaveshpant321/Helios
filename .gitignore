@@ -1,0 +1,27 @@
+# Environment variables
+.env
+
+# Binary/Executables
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+api/helios-api
+
+# Dependency directories
+api/vendor/
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Database logs/backups
+*.sql.bak
+*.log

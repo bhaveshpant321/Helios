@@ -1,0 +1,78 @@
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.auth-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.auth-box {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  width: 320px;
+  text-align: center;
+}
+
+.auth-box h2 {
+  margin-bottom: 20px;
+  color: #ffcc00;
+}
+
+label {
+  display: block;
+  text-align: left;
+  margin-top: 10px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  outline: none;
+  font-size: 14px;
+}
+
+.btn {
+  width: 100%;
+  background-color: #ffcc00;
+  color: #000;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background-color: #ffd633;
+}
+
+.switch-text {
+  margin-top: 10px;
+  font-size: 13px;
+}
+.switch-text a {
+  color: #ffcc00;
+  text-decoration: none;
+}
+.switch-text a:hover {
+  text-decoration: underline;
+}

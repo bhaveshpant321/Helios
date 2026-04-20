@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helios</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+</head>
+<body>
+  <nav>
+    <div class="logo"><i class="fa-solid fa-coins"></i> Helios</div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="trade.html">Trade</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="profile.html">Profile</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div class="filter-bar">
+      <select id="coinFilter">
+        <option value="all">All Trading Pairs</option>
+      </select>
+
+      <select id="sort">
+        <option value="none">Sort by</option>
+        <option value="asc">Price: Low to High</option>
+        <option value="desc">Price: High to Low</option>
+      </select>
+    </div>
+
+    <table class="stock-table" id="stockGrid">
+      <thead>
+        <tr>
+          <th>Trading Pair</th>
+          <th>Base Asset</th>
+          <th>Quote Asset</th>
+          <th>Price</th>
+          <th>24h Volume</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>

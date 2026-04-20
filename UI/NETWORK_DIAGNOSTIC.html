@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Network Diagnostics</title>
+    <style>
+        body { font-family: monospace; background: #1a1a1a; color: #0f0; padding: 20px; }
+        button { padding: 10px 20px; margin: 10px; background: #0f0; color: #000; border: none; cursor: pointer; font-size: 16px; font-weight: bold; }
+        #log { background: #000; border: 2px solid #0f0; padding: 15px; margin-top: 20px; height: 500px; overflow-y: auto; white-space: pre-wrap; }
+        .error { color: #f00; }
+        .success { color: #0f0; }
+        .warning { color: #ff0; }
+        input { padding: 10px; background: #000; color: #0f0; border: 2px solid #0f0; width: 300px; margin: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Network Diagnostics</h1>
+    
+    <div>
+        <label>API Server IP:Port</label>
+        <input type="text" id="apiServer" value="localhost:8082">
+    </div>
+    
+    <div>
+        <button onclick="runAllTests()">🚀 Run All Tests</button>
+        <button onclick="clearLog()">🗑️ Clear Log</button>
+    </div>
+    <div id="log"></div>
+
+    <script>
+        function log(msg, type = 'success') {
+            const div = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            const line = document.createElement('div');
+            line.className = type;
+            line.textContent = `[${time}] ${msg}`;
+            div.appendChild(line);
+            div.scrollTop = div.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        async function runAllTests() {
+            clearLog();
+            const server = document.getElementById('apiServer').value;
+            const [ip, port] = server.split(':');
+            
+            log('═══════════════════════════════════════════', 'warning');
+            log('HELIOS NETWORK DIAGNOSTIC TOOL', 'warning');
+            log('═══════════════════════════════════════════', 'warning');
+            log('');
+            log(`Target Server: ${server}`, 'success');
+            log('');
+
+            // Test 1: Basic HTTP health check
+            log('─────────────────────────────────────────', 'warning');
+            log('TEST 1: HTTP Health Check', 'warning');
+            log('─────────────────────────────────────────', 'warning');
+            try {
+                const startTime = Date.now();
+                const response = await fetch(`http://${server}/health`, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                const duration = Date.now() - startTime;
+                const data = await response.json();
+                
+                log(`✅ SUCCESS - Health endpoint reachable`, 'success');
+                log(`   Status: ${response.status}`, 'success');
+                log(`   Response Time: ${duration}ms`, 'success');
+                log(`   Data: ${JSON.stringify(data)}`, 'success');
+            } catch (err) {
+                log(`❌ FAILED - Cannot reach API server`, 'error');
+                log(`   Error: ${err.message}`, 'error');
+                log(`   Possible causes:`, 'error');
+                log(`   1. API server not running on partner's machine`, 'error');
+                log(`   2. Wrong IP address (check partner's IP with 'ipconfig')`, 'error');
+                log(`   3. Firewall blocking port ${port}`, 'error');
+                log(`   4. Not on same network/WiFi`, 'error');
+                return; // Stop further tests if basic connectivity fails
+            }
+            log('');
+
+            // Test 2: API endpoints
+            log('─────────────────────────────────────────', 'warning');
+            log('TEST 2: API Endpoints', 'warning');
+            log('─────────────────────────────────────────', 'warning');
+            try {
+                const response = await fetch(`http://${server}/api/v1/trading-pairs`);
+                const data = await response.json();
+                
+                log(`✅ Trading Pairs endpoint works`, 'success');
+                if (data.data && data.data.length > 0) {
+                    log(`   Available pairs:`, 'success');
+                    data.data.forEach(pair => {
+                        log(`     - ${pair.symbol} (ID: ${pair.id})`, 'success');
+                    });
+                }
+            } catch (err) {
+                log(`❌ Trading pairs endpoint failed: ${err.message}`, 'error');
+            }
+            log('');
+
+            // Test 3: WebSocket endpoint (HTTP probe)
+            log('─────────────────────────────────────────', 'warning');
+            log('TEST 3: WebSocket Endpoint Probe', 'warning');
+            log('─────────────────────────────────────────', 'warning');
+            try {
+                const response = await fetch(`http://${server}/ws/v1/market/BTC/USD`);
+                log(`   HTTP Status: ${response.status}`, response.status === 400 ? 'success' : 'error');
+                
+                if (response.status === 400) {
+                    log(`   ✅ Endpoint exists (400 = needs WebSocket upgrade)`, 'success');
+                } else if (response.status === 403) {
+                    log(`   ❌ 403 Forbidden - Route not matched`, 'error');
+                    log(`   Check if route is: /ws/v1/market/*pair (wildcard)`, 'error');
+                } else if (response.status === 404) {
+                    log(`   ❌ 404 Not Found - Endpoint doesn't exist`, 'error');
+                } else {
+                    const text = await response.text();
+                    log(`   Response: ${text}`, 'error');
+                }
+            } catch (err) {
+                log(`❌ WebSocket probe failed: ${err.message}`, 'error');
+            }
+            log('');
+
+            // Test 4: Actual WebSocket connection
+            log('─────────────────────────────────────────', 'warning');
+            log('TEST 4: WebSocket Connection', 'warning');
+            log('─────────────────────────────────────────', 'warning');
+            
+            const wsUrl = `ws://${server}/ws/v1/market/BTC%2FUSD`;
+            log(`   Connecting to: ${wsUrl}`, 'success');
+            
+            await testWebSocket(wsUrl);
+            
+            log('');
+            log('═══════════════════════════════════════════', 'warning');
+            log('DIAGNOSTIC COMPLETE', 'warning');
+            log('═══════════════════════════════════════════', 'warning');
+        }
+
+        function testWebSocket(url) {
+            return new Promise((resolve) => {
+                const ws = new WebSocket(url);
+                let resolved = false;
+                
+                const timeout = setTimeout(() => {
+                    if (!resolved) {
+                        log('   ⏱️ Connection timeout (5 seconds)', 'error');
+                        ws.close();
+                        resolved = true;
+                        resolve();
+                    }
+                }, 5000);
+                
+                ws.onopen = () => {
+                    clearTimeout(timeout);
+                    log('   ✅ WebSocket CONNECTED!', 'success');
+                    log('   Connection is working perfectly!', 'success');
+                    setTimeout(() => {
+                        ws.close();
+                        if (!resolved) {
+                            resolved = true;
+                            resolve();
+                        }
+                    }, 1000);
+                };
+                
+                ws.onmessage = (e) => {
+                    log(`   📨 Received: ${e.data.substring(0, 100)}...`, 'success');
+                };
+                
+                ws.onerror = (e) => {
+                    clearTimeout(timeout);
+                    log(`   ❌ WebSocket ERROR`, 'error');
+                    log(`   This usually means:`, 'error');
+                    log(`   - Server rejected the upgrade request`, 'error');
+                    log(`   - CORS issue with WebSocket`, 'error');
+                    log(`   - Route pattern mismatch`, 'error');
+                };
+                
+                ws.onclose = (e) => {
+                    clearTimeout(timeout);
+                    if (!resolved) {
+                        log(`   🔌 WebSocket CLOSED`, 'error');
+                        log(`   Code: ${e.code}`, 'error');
+                        log(`   Reason: ${e.reason || 'none'}`, 'error');
+                        
+                        if (e.code === 1006) {
+                            log(`   `, 'error');
+                            log(`   🔍 Code 1006 Diagnosis:`, 'error');
+                            log(`   - Connection failed before establishing`, 'error');
+                            log(`   - Check API server logs for actual error`, 'error');
+                            log(`   - Verify route is /ws/v1/market/*pair`, 'error');
+                        }
+                        resolved = true;
+                        resolve();
+                    }
+                };
+            });
+        }
+
+        log('🔧 Network Diagnostic Tool Ready');
+        log('Click "Run All Tests" to begin comprehensive testing');
+    </script>
+</body>
+</html>

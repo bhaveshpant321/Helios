@@ -1,0 +1,29 @@
+# Ignore binary
+helios-api
+*.exe
+
+# Environment variables
+.env
+
+# Go build artifacts
+*.o
+*.a
+*.so
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test coverage
+*.out
+coverage.html

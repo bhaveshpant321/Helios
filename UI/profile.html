@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile - Helios</title>
+    <link rel="stylesheet" href="css/profile.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <nav>
+      <div class="logo"><i class="fa-solid fa-coins"></i> Helios</div>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="trade.html">Trade</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="profile.html" class="active">Profile</a></li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <div class="profile-header">
+        <div class="user-icon"></div>
+        <div class="white">
+          <h2 id="user-name"></h2>
+          <p class="gray" id="user-email"><i class="fa-solid fa-envelope"></i></p>
+        </div>
+        <div class="white">
+          <p>
+            <i class="fa-solid fa-money-check-dollar"></i> Balance:
+            <strong id="balance" class="gray">$</strong>
+          </p>
+          <p>
+            <i class="fa-solid fa-wallet"></i> Wallet Balance:
+            <strong id="w-balance" class="gray">$</strong>
+          </p>
+        </div>
+        <div class="white">
+          <button class="btn" id="logoutBtn">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+          </button>
+        </div>
+      </div>
+
+      <div class="portfolio">
+        <h3 class="white"><i class="fa-solid fa-chart-pie"></i> Portfolio</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th>Symbol</th>
+              <th>Available</th>
+              <th>Held</th>
+              <th>Total</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="portfolioTable">
+            <!-- Data filled by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="edit-section">
+        <h3 class="white"><i class="fa-solid fa-user-pen"></i> Edit Profile</h3>
+        <form id="editForm">
+          <div class="input-form">
+            <label>Name:</label>
+            <input type="text" id="name" value="" />
+
+            <label>Email:</label>
+            <input type="email" id="email" value="" />
+          </div>
+          <div class="input-form">
+            <label>Password:</label>
+            <input type="password" id="pass" value="" />
+
+            <label>Confirm Password:</label>
+            <input type="password" id="c-pass" value="" />
+          </div>
+
+          <!-- <label>Wallet Balance:</label>
+          <input type="number" id="balance" value="12530.50" step="0.01" /> -->
+
+          <button type="submit" class="btn">
+            <i class="fa-solid fa-save"></i> Save Changes
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Logout Modal -->
+    <div class="modal" id="logoutModal">
+      <div class="modal-content">
+        <h3><i class="fa-solid fa-triangle-exclamation"></i> Confirm Logout</h3>
+        <p>Are you sure you want to log out?</p>
+        <div class="modal-actions">
+          <button class="btn danger" id="confirmLogout">Yes, Logout</button>
+          <button class="btn" id="cancelLogout">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/auth.js"></script>
+  </body>
+</html>

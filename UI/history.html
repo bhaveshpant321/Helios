@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order History | Helios</title>
+  <link rel="stylesheet" href="css/history.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav>
+    <div class="logo"><i class="fa-solid fa-coins"></i> Helios</div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="trade.html">Trade</a></li>
+      <li><a href="history.html" class="active">History</a></li>
+      <li><a href="profile.html">Profile</a></li>
+    </ul>
+  </nav>
+
+  <!-- Container -->
+  <div class="container">
+    <h2><i class="fa-solid fa-clock-rotate-left"></i> Order History</h2>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <select id="filterType">
+        <option value="all">All</option>
+        <option value="buy">Buy</option>
+        <option value="sell">Sell</option>
+      </select>
+      <select id="filterStatus">
+        <option value="all">All Status</option>
+        <option value="open">Open</option>
+        <option value="completed">Completed</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <table id="historyTable">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Trading Pair</th>
+          <th>Side</th>
+          <th>Type</th>
+          <th>Quantity</th>
+          <th>Filled</th>
+          <th>Price</th>
+          <th>Date</th>
+          <th>Status / Action</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <!-- Filled by JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/history.js"></script>
+  <script src="js/auth.js"></script>
+
+</body>
+</html>

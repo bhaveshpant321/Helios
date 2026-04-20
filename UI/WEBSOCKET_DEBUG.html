@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test - Helios</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #0f0;
+            border: none;
+            color: #000;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #0d0;
+        }
+        #log {
+            background: #000;
+            border: 2px solid #0f0;
+            padding: 15px;
+            margin-top: 20px;
+            height: 400px;
+            overflow-y: auto;
+        }
+        .error {
+            color: #f00;
+        }
+        .success {
+            color: #0f0;
+        }
+        .info {
+            color: #0ff;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            background: #000;
+            color: #0f0;
+            border: 2px solid #0f0;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔌 WebSocket Connection Test</h1>
+        
+        <div>
+            <label>Trading Pair Symbol:</label>
+            <input type="text" id="pairInput" value="BTC/USD" placeholder="e.g., BTC/USD">
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button onclick="testConnection()">🚀 Test WebSocket Connection</button>
+            <button onclick="clearLog()">🗑️ Clear Log</button>
+        </div>
+        
+        <div id="log"></div>
+    </div>
+
+    <script>
+        let ws = null;
+        
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = type;
+            entry.textContent = `[${timestamp}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+        
+        function testConnection() {
+            // Close existing connection
+            if (ws) {
+                ws.close();
+                log('Closed existing connection', 'info');
+            }
+            
+            clearLog();
+            
+            const symbol = document.getElementById('pairInput').value.trim();
+            
+            if (!symbol) {
+                log('❌ Please enter a trading pair symbol!', 'error');
+                return;
+            }
+            
+            // Encode the symbol
+            const encodedSymbol = encodeURIComponent(symbol);
+            const wsUrl = `ws://192.168.227.128:8082/ws/v1/market/${encodedSymbol}`;
+            
+            log(`📡 Testing WebSocket Connection...`, 'info');
+            log(`   Original Symbol: ${symbol}`, 'info');
+            log(`   Encoded Symbol: ${encodedSymbol}`, 'info');
+            log(`   Full URL: ${wsUrl}`, 'info');
+            log('', 'info');
+            
+            try {
+                ws = new WebSocket(wsUrl);
+                
+                ws.onopen = (event) => {
+                    log('✅ WebSocket CONNECTED successfully!', 'success');
+                    log('   Connection is OPEN and ready to receive data', 'success');
+                };
+                
+                ws.onmessage = (event) => {
+                    log('📨 Received message:', 'success');
+                    try {
+                        const data = JSON.parse(event.data);
+                        log(`   ${JSON.stringify(data, null, 2)}`, 'success');
+                    } catch (e) {
+                        log(`   ${event.data}`, 'success');
+                    }
+                };
+                
+                ws.onerror = (error) => {
+                    log('❌ WebSocket ERROR occurred!', 'error');
+                    log(`   Error: ${error}`, 'error');
+                    log('   Check if the API server is running', 'error');
+                };
+                
+                ws.onclose = (event) => {
+                    log('🔌 WebSocket CLOSED', 'info');
+                    log(`   Code: ${event.code}`, 'info');
+                    log(`   Reason: ${event.reason || 'No reason provided'}`, 'info');
+                    log(`   Clean: ${event.wasClean}`, 'info');
+                    
+                    if (event.code === 1006) {
+                        log('', 'error');
+                        log('⚠️  Code 1006 = Connection failed or server rejected', 'error');
+                        log('   Possible causes:', 'error');
+                        log('   1. Wrong URL or API server not running', 'error');
+                        log('   2. CORS issue', 'error');
+                        log('   3. Trading pair not found', 'error');
+                    }
+                };
+                
+            } catch (error) {
+                log(`❌ EXCEPTION creating WebSocket: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test on load
+        log('🔧 WebSocket Test Tool Ready', 'success');
+        log('Click "Test WebSocket Connection" to start', 'info');
+    </script>
+</body>
+</html>
