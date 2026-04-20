@@ -62,18 +62,19 @@ func main() {
 	// CORS configuration
 	corsConfig := cors.Config{
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Accept", "X-Requested-With"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}
 
-	// Handle Wildcard or Specific Origins
-	if len(cfg.CORS.AllowedOrigins) == 1 && cfg.CORS.AllowedOrigins[0] == "*" {
+	// Logic for AllowOrigins
+	origins := cfg.CORS.AllowedOrigins
+	if len(origins) == 1 && origins[0] == "*" {
 		corsConfig.AllowAllOrigins = true
-		corsConfig.AllowCredentials = false // Credentials cannot be used with wildcard *
+		corsConfig.AllowCredentials = false // Credentials/Headers might be restricted with absolute wildcard
 	} else {
-		corsConfig.AllowOrigins = cfg.CORS.AllowedOrigins
+		corsConfig.AllowOrigins = origins
 	}
 	
 	router.Use(cors.New(corsConfig))

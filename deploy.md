@@ -32,10 +32,10 @@ Follow this step-by-step guide to deploy the Helios Trading Platform to the clou
     -   `DATABASE_URL`: (Paste your Neon connection string here).
     -   `ENV`: `production`.
     -   `JWT_SECRET`: (Generate a long random string).
-    -   `DB_SSLMODE`: `verify-full` (Required for Neon).
-    -   `CORS_ALLOWED_ORIGINS`: `https://helios-frontend.vercel.app` (Update this AFTER you deploy the frontend).
+    -   `DB_SSLMODE`: `require` (Required for Neon).
+    -   `CORS_ALLOWED_ORIGINS`: `https://helios-trading.vercel.app` (Match your Vercel URL exactly).
 5.  **Deploy**: Click **Create Web Service**. Render will build and deploy your Go API.
-6.  **Copy API URL**: Once deployed, copy the URL (e.g., `https://helios-api.onrender.com`).
+6.  **Copy API URL**: Once deployed, copy the URL (e.g., `https://helios-api-ax7p.onrender.com`).
 
 ---
 
@@ -48,27 +48,15 @@ Follow this step-by-step guide to deploy the Helios Trading Platform to the clou
 3.  **Configure Project**:
     -   **Framework Preset**: Other (or Plain HTML).
     -   **Root Directory**: `UI` (IMPORTANT).
-4.  **Inject API URL**:
-    -   Since we are using vanilla JS, we'll inject the API URL in the `index.html` (or a global script).
-    -   **Quick Fix**: In `UI/js/config.js`, you can now hardcode the production URL you got from Render, or add this snippet to your `index.html` head:
-    ```html
-    <script>
-      window.__HELIOS_CONFIG__ = {
-        API_BASE_URL: 'https://helios-api.onrender.com/api/v1',
-        WS_URL: 'wss://helios-api.onrender.com/ws/v1/market'
-      };
-    </script>
-    ```
-5.  **Deploy**: Click **Deploy**.
-6.  **Update CORS**: Go back to Render and update `CORS_ALLOWED_ORIGINS` with your new Vercel URL.
+4.  **Deploy**: Click **Deploy**.
 
 ---
 
-## ✅ Post-Deployment Check
+## ✅ Post-Deployment Check (Troubleshooting CORS)
 
-1.  **Health Check**: Visit `https://your-api.onrender.com/health`. It should return `{"status":"healthy"}`.
-2.  **WebSocket Test**: Open the Trade page on your Vercel site. Check the browser console to ensure the WebSocket connects successfully (`wss://...`).
-3.  **Database**: Register a new user and verify they appear in your Neon database dashboard.
+If you see "Failed to load markets" in the UI:
+1.  **Check Origin**: Ensure `CORS_ALLOWED_ORIGINS` in Render exactly matches your Vercel URL (including `https://`, no trailing slash).
+2.  **Health Check**: Visit `https://your-api.onrender.com/`. You should see `Welcome to Helios API`.
 
 ---
 **Congratulations! Your Helios platform is now live! 🚀**
