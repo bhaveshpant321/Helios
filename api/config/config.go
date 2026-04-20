@@ -82,8 +82,9 @@ func Load() (*Config, error) {
 	}
 
 	// Validate required fields
-	if config.Database.Password == "" {
-		return nil, fmt.Errorf("DB_PASSWORD is required")
+	// If DATABASE_URL is provided, we skip individual field validation
+	if os.Getenv("DATABASE_URL") == "" && config.Database.Password == "" {
+		return nil, fmt.Errorf("DB_PASSWORD is required when DATABASE_URL is not provided")
 	}
 
 	if config.JWT.Secret == "" {
