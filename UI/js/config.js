@@ -3,12 +3,11 @@
 // ==========================================================
 
 const CONFIG = {
-  // API Base URL
-  API_BASE_URL: 'http://localhost:8082/api/v1',
+  // API Base URL (Override via window.__HELIOS_CONFIG__.API_BASE_URL)
+  API_BASE_URL: (window.__HELIOS_CONFIG__ && window.__HELIOS_CONFIG__.API_BASE_URL) || 'http://localhost:8080/api/v1',
   
-  // WebSocket URL
-  // WS_URL: 'ws://localhost:8082/ws/v1/market',
-  WS_URL: 'ws://localhost:8082/ws/v1/market',
+  // WebSocket URL (Override via window.__HELIOS_CONFIG__.WS_URL)
+  WS_URL: (window.__HELIOS_CONFIG__ && window.__HELIOS_CONFIG__.WS_URL) || 'ws://localhost:8080/ws/v1/market',
   
   // Local Storage Keys
   STORAGE_KEYS: {

@@ -94,13 +94,21 @@ func Load() (*Config, error) {
 }
 
 func (c *Config) GetDatabaseURL() string {
+	// Priority 1: Use DATABASE_URL if provided (Standard for Render/Railway/Neon)
+	if dbURL := os.Getenv("DATABASE_URL"); dbURL != "" {
+		return dbURL
+	}
+
+	// Priority 2: Build from individual components
+	sslMode := getEnv("DB_SSLMODE", "disable")
 	return fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
 		c.Database.User,
 		c.Database.Password,
 		c.Database.Host,
 		c.Database.Port,
 		c.Database.Name,
+		sslMode,
 	)
 }
 
