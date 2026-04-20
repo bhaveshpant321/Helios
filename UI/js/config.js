@@ -4,10 +4,10 @@
 
 const CONFIG = {
   // API Base URL (Override via window.__HELIOS_CONFIG__.API_BASE_URL)
-  API_BASE_URL: (window.__HELIOS_CONFIG__ && window.__HELIOS_CONFIG__.API_BASE_URL) || 'http://localhost:8080/api/v1',
+  API_BASE_URL: (window.__HELIOS_CONFIG__ && window.__HELIOS_CONFIG__.API_BASE_URL) || 'https://helios-api-ax7p.onrender.com/api/v1',
   
   // WebSocket URL (Override via window.__HELIOS_CONFIG__.WS_URL)
-  WS_URL: (window.__HELIOS_CONFIG__ && window.__HELIOS_CONFIG__.WS_URL) || 'ws://localhost:8080/ws/v1/market',
+  WS_URL: (window.__HELIOS_CONFIG__ && window.__HELIOS_CONFIG__.WS_URL) || 'wss://helios-api-ax7p.onrender.com/ws/v1/market',
   
   // Local Storage Keys
   STORAGE_KEYS: {
