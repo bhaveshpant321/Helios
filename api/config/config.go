@@ -51,6 +51,13 @@ func Load() (*Config, error) {
 	// Load .env file if it exists (development)
 	_ = godotenv.Load()
 
+	// CORS configuration
+	originsStr := getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:5500,http://127.0.0.1:5500")
+	origins := strings.Split(originsStr, ",")
+	for i := range origins {
+		origins[i] = strings.TrimSpace(origins[i])
+	}
+
 	config := &Config{
 		Server: ServerConfig{
 			Port: getEnv("PORT", "8080"),
@@ -70,10 +77,7 @@ func Load() (*Config, error) {
 			Expiry: time.Duration(getEnvAsInt("JWT_EXPIRY_HOURS", 24)) * time.Hour,
 		},
 		CORS: CORSConfig{
-			AllowedOrigins: strings.Split(
-				getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:3000"),
-				",",
-			),
+			AllowedOrigins: origins,
 		},
 		Initial: InitialConfig{
 			QuoteAssetID:   getEnvAsInt("INITIAL_QUOTE_ASSET_ID", 1),

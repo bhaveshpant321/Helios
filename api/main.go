@@ -27,6 +27,7 @@ func main() {
 	}
 
 	log.Printf("🚀 Starting Helios API Server in %s mode...", cfg.Server.Env)
+	log.Printf("🔒 Configured CORS Origins: %v", cfg.CORS.AllowedOrigins)
 
 	// Initialize database
 	database, err := db.NewDatabase(cfg)
