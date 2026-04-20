@@ -61,14 +61,31 @@ func main() {
 	
 	// CORS configuration
 	corsConfig := cors.Config{
-		AllowOrigins:     cfg.CORS.AllowedOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}
+
+	// Handle Wildcard or Specific Origins
+	if len(cfg.CORS.AllowedOrigins) == 1 && cfg.CORS.AllowedOrigins[0] == "*" {
+		corsConfig.AllowAllOrigins = true
+		corsConfig.AllowCredentials = false // Credentials cannot be used with wildcard *
+	} else {
+		corsConfig.AllowOrigins = cfg.CORS.AllowedOrigins
+	}
+	
 	router.Use(cors.New(corsConfig))
+
+	// Root endpoint
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Welcome to Helios API",
+			"status": "online",
+			"docs": "/health",
+		})
+	})
 
 	// Health check endpoint
 	router.GET("/health", func(c *gin.Context) {
